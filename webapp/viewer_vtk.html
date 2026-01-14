@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mesh Shortest Path Viewer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="controls">
+        <h3>Mesh Viewer</h3>
+        <button onclick="downloadFromCloud()">Download from Cloud</button> oder <br>
+        <input type="file" id="fileInput" accept=".vtp" />
+        <br>
+        <button onclick="resetCamera()">Reset Camera</button>
+        <button onclick="toggleWireframe()">Toggle Wireframe</button>
+    </div>
+    <div id="info">
+        Steuerung: Rotieren (linke Maustaste), Verschieben (rechte Maustaste), Rotation um z-Achse (Shift + linke Maustaste), Zoomen (Mausrad)
+    </div>
+    <div id="metadata"></div>
+    <div id="container"></div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "@kitware/vtk.js/": "https://cdn.skypack.dev/@kitware/vtk.js/"
+        }
+    }
+    </script>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
