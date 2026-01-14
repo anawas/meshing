@@ -10,10 +10,15 @@
     <div id="controls">
         <h3>Mesh Viewer</h3>
         <button onclick="downloadFromCloud()">Download from Cloud</button> oder <br>
-        <input type="file" id="fileInput" accept=".vtp" />
+        <input type="file" id="fileInput" accept=".vtp" multiple />
         <br>
         <button onclick="resetCamera()">Reset Camera</button>
         <button onclick="toggleWireframe()">Toggle Wireframe</button>
+
+        <div id="layerControls" style="margin-top: 15px;">
+            <h4>Layers</h4>
+            <div id="layerCheckboxes"></div>
+        </div>
     </div>
     <div id="info">
         Steuerung: Rotieren (linke Maustaste), Verschieben (rechte Maustaste), Rotation um z-Achse (Shift + linke Maustaste), Zoomen (Mausrad)

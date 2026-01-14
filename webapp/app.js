@@ -65,16 +65,7 @@ picker.setTolerance(PICKER_TOLERANCE);
 // State
 // ============================================================================
 
-let actor = null;
-let mapper = null;
-let currentSource = null;
-let actorAdded = false;
 let wireframeMode = false;
-
-// Setup mapper and actor
-mapper = vtkMapper.newInstance();
-actor = vtkActor.newInstance();
-actor.setMapper(mapper);
 
 // ============================================================================
 // Helper Functions
@@ -124,7 +115,7 @@ function positionTooltip(element, mousePos) {
 }
 
 function buildMetadataText(cellId, cellData) {
-    const radius = cellData.getArrayByName('radius');
+    const size = cellData.getArrayByName('size');
     const vertexIndex = cellData.getArrayByName('vertex_index');
     const pathPosition = cellData.getArrayByName('path_position');
     const roleCode = cellData.getArrayByName('role_code');
@@ -141,9 +132,9 @@ function buildMetadataText(cellId, cellData) {
         text += `<br>Position im Pfad: ${position}`;
     }
 
-    const rad = getCellValue(radius, cellId);
-    if (rad !== null) {
-        text += `<br>Radius: ${rad}`;
+    const markerSize = getCellValue(size, cellId);
+    if (markerSize !== null) {
+        text += `<br>Größe: ${markerSize}`;
     }
 
     const role = getCellValue(roleCode, cellId);
@@ -159,24 +150,54 @@ function buildMetadataText(cellId, cellData) {
 // ============================================================================
 
 const fileLoader = setupFileLoader({
-    mapper,
     renderer,
-    actor,
     picker,
-    renderWindow,
-    setCurrentSource: (source) => { currentSource = source; },
-    setActorAdded: (added) => { actorAdded = added; }
+    renderWindow
 });
 
+// ============================================================================
+// Layer Controls
+// ============================================================================
+
+function createLayerCheckboxes() {
+    const container = document.getElementById('layerCheckboxes');
+    container.innerHTML = '';
+
+    fileLoader.LAYERS.forEach(layerDef => {
+        const div = document.createElement('div');
+        div.style.marginBottom = '5px';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `layer-${layerDef.id}`;
+        checkbox.checked = layerDef.defaultVisible;
+        checkbox.addEventListener('change', (e) => {
+            fileLoader.setLayerVisibility(layerDef.id, e.target.checked);
+        });
+
+        const label = document.createElement('label');
+        label.htmlFor = checkbox.id;
+        label.textContent = layerDef.label;
+        label.style.marginLeft = '5px';
+
+        div.appendChild(checkbox);
+        div.appendChild(label);
+        container.appendChild(div);
+    });
+}
+
+// Initialize layer checkboxes
+createLayerCheckboxes();
+
 // Expose downloadFromCloud to window for HTML button onclick
-window.downloadFromCloud = fileLoader.downloadFromCloud;
+window.downloadFromCloud = fileLoader.downloadAllLayersFromCloud;
 
 // ============================================================================
 // Interaction Handlers
 // ============================================================================
 
 function handleClick(callData) {
-    if (!actorAdded || !currentSource) return;
+    if (!fileLoader.isInitialized()) return;
 
     const pos = callData.position;
     const point = [pos.x, pos.y, 0.0];
@@ -185,16 +206,30 @@ function handleClick(callData) {
 
     if (picker.getActors().length > 0) {
         const cellId = picker.getCellId();
-        if (cellId !== -1) {
-            displayMetadata(cellId, pos);
+        const pickedActor = picker.getActors()[0];
+
+        // Find which layer this actor belongs to
+        let pickedSource = null;
+        for (const layerId in fileLoader.layers) {
+            const layer = fileLoader.layers[layerId];
+            if (layer.actor === pickedActor && layer.visible) {
+                pickedSource = layer.source;
+                break;
+            }
+        }
+
+        if (pickedSource && cellId !== -1) {
+            displayMetadata(pickedSource, cellId, pos);
+        } else {
+            hideMetadata();
         }
     } else {
         hideMetadata();
     }
 }
 
-function displayMetadata(cellId, mousePos) {
-    const cellData = currentSource.getCellData();
+function displayMetadata(source, cellId, mousePos) {
+    const cellData = source.getCellData();
     const metadataDiv = document.getElementById('metadata');
 
     const vertexIndex = cellData.getArrayByName('vertex_index');
@@ -223,17 +258,23 @@ interactor.onLeftButtonPress((callData) => {
 // ============================================================================
 
 window.resetCamera = function() {
-    if (actorAdded) {
+    if (fileLoader.isInitialized()) {
         renderer.resetCamera();
         renderWindow.render();
     }
 };
 
 window.toggleWireframe = function() {
-    if (actorAdded) {
+    if (fileLoader.isInitialized()) {
         wireframeMode = !wireframeMode;
         const mode = wireframeMode ? REPRESENTATION_MODES.WIREFRAME : REPRESENTATION_MODES.SURFACE;
-        actor.getProperty().setRepresentation(mode);
+
+        // Apply wireframe mode to all actors
+        for (const layerId in fileLoader.layers) {
+            const layer = fileLoader.layers[layerId];
+            layer.actor.getProperty().setRepresentation(mode);
+        }
+
         renderWindow.render();
     }
 };
