@@ -1,0 +1,12 @@
+venv
+.idea
+.vscode
+.claude
+webapp/.claude
+
+*.vtp
+
+*.stl
+!0.stl
+
+*.txt
