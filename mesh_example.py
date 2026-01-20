@@ -69,7 +69,7 @@ tr.util.attach_to_log(level=logging.ERROR)
 
 # there is an open surface in this file
 # mesh_filename = "Stanford_Bunny_sample.stl"
-mesh_filename = "1.stl"
+mesh_filename = "0.stl"
 
 mesh = tr.load(os.path.join("meshes", mesh_filename))
 simplified = mesh.simplify_quadric_decimation(percent=0.98)
