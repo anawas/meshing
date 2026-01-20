@@ -12,3 +12,10 @@ webapp/.claude
 !0.stl
 
 *.txt
+
+# Node.js / TypeScript
+node_modules/
+webapp/node_modules/
+webapp/dist/
+*.log
+package-lock.json
