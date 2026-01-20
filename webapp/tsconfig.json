@@ -15,7 +15,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "typeRoots": ["./types", "./node_modules/@types"]
+    "types": []
   },
   "include": ["src/**/*", "types/**/*"],
   "exclude": ["node_modules"]
