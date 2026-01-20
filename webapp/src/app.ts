@@ -1,7 +1,5 @@
 import '@kitware/vtk.js/Rendering/Profiles/Geometry';
 import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
-import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
-import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 import vtkInteractorStyleManipulator from '@kitware/vtk.js/Interaction/Style/InteractorStyleManipulator';
 import Presets from '@kitware/vtk.js/Interaction/Style/InteractorStyleManipulator/Presets';
 import vtkCellPicker from '@kitware/vtk.js/Rendering/Core/CellPicker';
@@ -17,8 +15,6 @@ const ROLE_CODES = {
   INTERMEDIATE: 2,
   END: 3
 } as const;
-
-type RoleCode = typeof ROLE_CODES[keyof typeof ROLE_CODES];
 
 const ROLE_LABELS: Record<number, string> = {
   [ROLE_CODES.START]: 'Startpunkt',

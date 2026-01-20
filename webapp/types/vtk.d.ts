@@ -3,49 +3,57 @@
 declare module '@kitware/vtk.js/Rendering/Profiles/Geometry';
 
 declare module '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow' {
-  export interface vtkFullScreenRenderWindow {
-    getRenderer(): vtkRenderer;
-    getRenderWindow(): vtkRenderWindow;
+  interface vtkFullScreenRenderWindow {
+    getRenderer(): any;
+    getRenderWindow(): any;
   }
 
-  export default {
+  const vtkFullScreenRenderWindowModule: {
     newInstance(config?: { container: HTMLElement | null }): vtkFullScreenRenderWindow;
   };
+
+  export default vtkFullScreenRenderWindowModule;
 }
 
 declare module '@kitware/vtk.js/Rendering/Core/Actor' {
-  export interface vtkProperty {
+  interface vtkProperty {
     setRepresentation(mode: number): void;
   }
 
-  export interface vtkActor {
+  interface vtkActor {
     setMapper(mapper: any): void;
     getProperty(): vtkProperty;
     setVisibility(visible: boolean): void;
   }
 
-  export default {
+  const vtkActorModule: {
     newInstance(): vtkActor;
   };
+
+  export default vtkActorModule;
 }
 
 declare module '@kitware/vtk.js/Rendering/Core/Mapper' {
-  export interface vtkMapper {
+  interface vtkMapper {
     setInputData(data: any): void;
     modified(): void;
   }
 
-  export default {
+  const vtkMapperModule: {
     newInstance(): vtkMapper;
   };
+
+  export default vtkMapperModule;
 }
 
 declare module '@kitware/vtk.js/Interaction/Style/InteractorStyleManipulator' {
-  export interface vtkInteractorStyleManipulator {}
+  interface vtkInteractorStyleManipulator {}
 
-  export default {
+  const vtkInteractorStyleManipulatorModule: {
     newInstance(): vtkInteractorStyleManipulator;
   };
+
+  export default vtkInteractorStyleManipulatorModule;
 }
 
 declare module '@kitware/vtk.js/Interaction/Style/InteractorStyleManipulator/Presets' {
@@ -54,16 +62,18 @@ declare module '@kitware/vtk.js/Interaction/Style/InteractorStyleManipulator/Pre
     options: Record<string, any>;
   }
 
-  export default {
+  const PresetsModule: {
     applyDefinitions(
       definitions: InteractorStyleDefinition[],
       style: any
     ): void;
   };
+
+  export default PresetsModule;
 }
 
 declare module '@kitware/vtk.js/Rendering/Core/CellPicker' {
-  export interface vtkCellPicker {
+  interface vtkCellPicker {
     setPickFromList(flag: number): void;
     setTolerance(tolerance: number): void;
     initializePickList(): void;
@@ -73,55 +83,24 @@ declare module '@kitware/vtk.js/Rendering/Core/CellPicker' {
     getCellId(): number;
   }
 
-  export default {
+  const vtkCellPickerModule: {
     newInstance(): vtkCellPicker;
   };
+
+  export default vtkCellPickerModule;
 }
 
 declare module '@kitware/vtk.js/IO/XML/XMLPolyDataReader' {
-  export interface vtkXMLPolyDataReader {
+  interface vtkXMLPolyDataReader {
     parseAsArrayBuffer(buffer: ArrayBuffer): void;
-    getOutputData(index: number): vtkPolyData;
+    getOutputData(index: number): any;
   }
 
-  export default {
+  const vtkXMLPolyDataReaderModule: {
     newInstance(): vtkXMLPolyDataReader;
   };
-}
 
-// Common VTK types
-interface vtkDataArray {
-  getData(): any[];
-}
-
-interface vtkCellData {
-  getArrayByName(name: string): vtkDataArray | null;
-}
-
-interface vtkPolyData {
-  getCellData(): vtkCellData;
-}
-
-interface vtkRenderer {
-  addActor(actor: any): void;
-  getActors(): any[];
-  resetCamera(): void;
-}
-
-interface vtkRenderWindow {
-  getInteractor(): vtkInteractor;
-  render(): void;
-}
-
-interface vtkInteractorCallData {
-  position: { x: number; y: number };
-  controlKey: boolean;
-  shiftKey: boolean;
-}
-
-interface vtkInteractor {
-  setInteractorStyle(style: any): void;
-  onLeftButtonPress(callback: (callData: vtkInteractorCallData) => void): void;
+  export default vtkXMLPolyDataReaderModule;
 }
 
 // Extend Window interface for global functions
