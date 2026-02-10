@@ -47,7 +47,7 @@ export interface FileLoaderAPI {
 
 const LAYERS: readonly LayerConfig[] = [
   { id: 'mesh', filename: 'mesh.vtp', label: 'Mesh', defaultVisible: true },
-  { id: 'markers', filename: 'markers.vtp', label: 'Pfadmarker', defaultVisible: true }
+  { id: 'markers', filename: 'markers.vtp', label: 'Path marker', defaultVisible: true }
 ] as const;
 
 // ============================================================================

@@ -129,17 +129,17 @@ function buildMetadataText(cellId: number, cellData: any): string {
 
   const position = getCellValue(pathPosition, cellId);
   if (position !== null) {
-    text += `<br>Position im Pfad: ${position}`;
+    text += `<br>Position on path: ${position}`;
   }
 
   const markerSize = getCellValue(size, cellId);
   if (markerSize !== null) {
-    text += `<br>Größe: ${markerSize}`;
+    text += `<br>Size: ${markerSize}`;
   }
 
   const role = getCellValue(roleCode, cellId);
   if (role !== null) {
-    text += `<br>Rolle: ${getRoleLabel(role)}`;
+    text += `<br>Role: ${getRoleLabel(role)}`;
   }
 
   return text;

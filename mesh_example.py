@@ -72,7 +72,7 @@ tr.util.attach_to_log(level=logging.ERROR)
 mesh_filename = "0.stl"
 
 mesh = tr.load(os.path.join("meshes", mesh_filename))
-simplified = mesh.simplify_quadric_decimation(percent=0.98)
+simplified = mesh.simplify_quadric_decimation(percent=0.0)
 print(f"{len(simplified.vertices)=}")
 print(f"{simplified.edges[0]}")
 
