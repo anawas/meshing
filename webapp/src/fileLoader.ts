@@ -46,8 +46,11 @@ export interface FileLoaderAPI {
 // ============================================================================
 
 const LAYERS: readonly LayerConfig[] = [
-  { id: 'mesh', filename: 'mesh.vtp', label: 'Mesh', defaultVisible: true },
-  { id: 'markers', filename: 'markers.vtp', label: 'Path marker', defaultVisible: true }
+  { id: 'sat_glyphs', filename: 'sat_glyphs.vtp', label: 'Saturated Glyphs', defaultVisible: true },
+  { id: 'unsat_glyphs', filename: 'unsat_glyphs.vtp', label: 'Unsaturated Glyphs', defaultVisible: true },
+  { id: 'G_sat_flow', filename: 'G_sat_flow.vtp', label: 'Water flow', defaultVisible: true },
+  { id: 'isoline_segments', filename: 'isoline_segments.vtp', label: 'Surface water level', defaultVisible: true },
+  { id: 'all_paths', filename: 'all_paths.vtp', label: 'Hydraulic head', defaultVisible: true },
 ] as const;
 
 // ============================================================================
@@ -221,11 +224,6 @@ export function setupFileLoader(dependencies: FileLoaderDependencies): FileLoade
         alert(`Failed to load files: ${errorMessage}`);
       });
   }
-
-  // Setup file input listener (allow multiple files)
-  const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-  fileInput.setAttribute('multiple', 'multiple');
-  fileInput.addEventListener('change', handleFileSelect);
 
   // Initialize picker
   picker.initializePickList();

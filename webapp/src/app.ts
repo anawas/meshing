@@ -115,26 +115,16 @@ function positionTooltip(element: HTMLElement, mousePos: { x: number; y: number 
 }
 
 function buildMetadataText(cellId: number, cellData: any): string {
-  const size = cellData.getArrayByName('size');
-  const vertexIndex = cellData.getArrayByName('vertex_index');
-  const pathPosition = cellData.getArrayByName('path_position');
+  console.log(cellData)
+  const flow = cellData.getArrayByName('Q');
   const roleCode = cellData.getArrayByName('role_code');
 
-  let text = '<strong>Metadaten:</strong>';
+  let text = '<strong>Metadata:</strong>';
 
-  const vIndex = getCellValue(vertexIndex, cellId);
-  if (vIndex !== null) {
-    text += `<br>Vertex Index: ${vIndex}`;
-  }
 
-  const position = getCellValue(pathPosition, cellId);
-  if (position !== null) {
-    text += `<br>Position on path: ${position}`;
-  }
-
-  const markerSize = getCellValue(size, cellId);
+  const markerSize = getCellValue(flow, cellId);
   if (markerSize !== null) {
-    text += `<br>Size: ${markerSize}`;
+    text += `<br>Flow: ${markerSize.toPrecision(3)}`;
   }
 
   const role = getCellValue(roleCode, cellId);
@@ -236,7 +226,8 @@ function displayMetadata(source: any, cellId: number, mousePos: { x: number; y: 
   const metadataDiv = document.getElementById('metadata');
   if (!metadataDiv) return;
 
-  const vertexIndex = cellData.getArrayByName('vertex_index');
+  const vertexIndex = cellData.getArrayByName('Q');
+  console.log(vertexIndex)
 
   // Only show metadata for spheres (vertex_index >= 0)
   if (!isSphere(vertexIndex, cellId)) {
