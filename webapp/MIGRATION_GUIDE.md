@@ -12,7 +12,7 @@ The webapp has been successfully converted from JavaScript to TypeScript with st
 ```
 webapp/
 ├── app.js
-├── fileLoader.js
+├── fracture_zone_loader.js  # (was fileLoader.js)
 ├── viewer_vtk.html
 └── styles.css
 ```
@@ -21,20 +21,21 @@ webapp/
 ```
 webapp/
 ├── src/
-│   ├── app.ts              # Converted from app.js
-│   └── fileLoader.ts       # Converted from fileLoader.js
+│   ├── app.ts                    # Converted from app.js
+│   ├── fracture_zone_loader.ts  # Converted from fracture_zone_loader.js
+│   └── damage_zone_loader.ts    # New - Damage zone functionality
 ├── types/
-│   └── vtk.d.ts           # Type definitions for VTK.js
-├── dist/                   # Build output (auto-generated)
-├── index.html             # New entry point (was viewer_vtk.html)
-├── viewer_vtk.html        # Old file (can be removed)
-├── app.js                 # Old file (can be removed)
-├── fileLoader.js          # Old file (can be removed)
-├── styles.css             # Unchanged
-├── package.json           # New - npm configuration
-├── tsconfig.json          # New - TypeScript config
-├── vite.config.ts         # New - Vite build config
-└── README.md              # New - Documentation
+│   └── vtk.d.ts                 # Type definitions for VTK.js
+├── dist/                         # Build output (auto-generated)
+├── index.html                   # New entry point (was viewer_vtk.html)
+├── viewer_vtk.html              # Old file (can be removed)
+├── app.js                       # Old file (can be removed)
+├── fracture_zone_loader.js      # Old file (can be removed)
+├── styles.css                   # Unchanged
+├── package.json                 # New - npm configuration
+├── tsconfig.json                # New - TypeScript config
+├── vite.config.ts               # New - Vite build config
+└── README.md                    # New - Documentation
 ```
 
 ### Build System
@@ -47,7 +48,7 @@ webapp/
 
 All code now has proper TypeScript types:
 
-1. **Custom Types** ([src/fileLoader.ts](src/fileLoader.ts)):
+1. **Custom Types** ([src/fracture_zone_loader.ts](src/fracture_zone_loader.ts)):
    - `LayerConfig` - Layer configuration interface
    - `Layer` - Layer state interface
    - `Layers` - Layer collection type
@@ -122,7 +123,7 @@ Once you've verified everything works, you can remove:
 
 ```bash
 cd webapp
-rm app.js fileLoader.js viewer_vtk.html
+rm app.js fracture_zone_loader.js viewer_vtk.html
 ```
 
 ## Configuration Files
@@ -199,12 +200,12 @@ If the app doesn't work in browser:
 
 **Before:**
 ```javascript
-import { setupFileLoader } from './fileLoader.js';
+import { setupFileLoader } from './fracture_zone_loader.js';
 ```
 
 **After:**
 ```typescript
-import { setupFileLoader, type FileLoaderAPI } from './fileLoader.js';
+import { setupFileLoader, type FileLoaderAPI } from './fracture_zone_loader.js';
 ```
 
 Type-only imports use the `type` keyword.

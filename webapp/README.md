@@ -7,8 +7,9 @@ A 3D mesh visualization web application built with TypeScript and VTK.js.
 ```
 webapp/
 ├── src/
-│   ├── app.ts              # Main application entry point
-│   └── fileLoader.ts       # File loading and layer management
+│   ├── app.ts                    # Main application entry point
+│   ├── fracture_zone_loader.ts  # Fracture zone file loading and layer management
+│   └── damage_zone_loader.ts    # Damage zone switching and loading
 ├── types/
 │   └── vtk.d.ts           # TypeScript definitions for VTK.js
 ├── dist/                   # Build output (generated)

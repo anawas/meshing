@@ -3,7 +3,7 @@ import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreen
 import vtkInteractorStyleManipulator from '@kitware/vtk.js/Interaction/Style/InteractorStyleManipulator';
 import Presets from '@kitware/vtk.js/Interaction/Style/InteractorStyleManipulator/Presets';
 import vtkCellPicker from '@kitware/vtk.js/Rendering/Core/CellPicker';
-import { setupFileLoader, type FileLoaderAPI, type LayerConfig } from './fileLoader.js';
+import { setupFileLoader, type FileLoaderAPI, type LayerConfig } from './fracture_zone_loader.js';
 import { initializeDamageZoneLoader } from './damage_zone_loader.js';
 
 // ============================================================================
@@ -249,4 +249,4 @@ window.toggleWireframe = function(): void {
 // Initialize damage zone loader
 initializeDamageZoneLoader();
 
-// File input listener is set up in fileLoader.ts
+// File input listener is set up in fracture_zone_loader.ts

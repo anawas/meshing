@@ -54,5 +54,5 @@ export function initializeDamageZoneLoader(): void {
 // async function loadDamageZoneFromCloud(): Promise<void> {
 //   // Implementation placeholder
 //   console.log('Loading damage zone from cloud...');
-//   // Will contain logic similar to downloadAllLayersFromCloud in fileLoader.ts
+//   // Will contain logic similar to downloadAllLayersFromCloud in fracture_zone_loader.ts
 // }

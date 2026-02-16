@@ -72,7 +72,7 @@ After migration, verify:
 - **Solution**: Install Node.js from https://nodejs.org/
 
 **Problem**: TypeScript errors during type-check
-- **Solution**: Check the error messages and fix type issues in [src/app.ts](src/app.ts) or [src/fileLoader.ts](src/fileLoader.ts)
+- **Solution**: Check the error messages and fix type issues in [src/app.ts](src/app.ts) or [src/fracture_zone_loader.ts](src/fracture_zone_loader.ts)
 
 **Problem**: Build fails
 - **Solution**: Run `npm run type-check` first to see TypeScript errors
