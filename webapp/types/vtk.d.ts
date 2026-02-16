@@ -108,4 +108,6 @@ interface Window {
   resetCamera?: () => void;
   toggleWireframe?: () => void;
   downloadFromCloud?: () => Promise<void>;
+  showFractureZone?: () => void;
+  showDamageZone?: () => void;
 }
