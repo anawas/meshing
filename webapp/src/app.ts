@@ -9,19 +9,6 @@ import { setupFileLoader, type FileLoaderAPI, type LayerConfig } from './fileLoa
 // Constants
 // ============================================================================
 
-const ROLE_CODES = {
-  NONE: 0,
-  START: 1,
-  INTERMEDIATE: 2,
-  END: 3
-} as const;
-
-const ROLE_LABELS: Record<number, string> = {
-  [ROLE_CODES.START]: 'Startpunkt',
-  [ROLE_CODES.END]: 'Endpunkt',
-  [ROLE_CODES.INTERMEDIATE]: 'Zwischenpunkt'
-};
-
 const REPRESENTATION_MODES = {
   WIREFRAME: 1,
   SURFACE: 2
@@ -76,15 +63,6 @@ function hideMetadata(): void {
   }
 }
 
-function getRoleLabel(roleCode: number): string {
-  return ROLE_LABELS[roleCode] || 'Unbekannt';
-}
-
-function isSphere(vertexIndex: any | null, cellId: number): boolean {
-  if (!vertexIndex) return false;
-  return vertexIndex.getData()[cellId] >= 0;
-}
-
 function getCellValue(array: any | null, cellId: number): number | null {
   return array ? array.getData()[cellId] : null;
 }
@@ -115,10 +93,9 @@ function positionTooltip(element: HTMLElement, mousePos: { x: number; y: number 
 }
 
 function buildMetadataText(cellId: number, cellData: any): string {
-  console.log(cellData)
   const flow = cellData.getArrayByName('Q');
-  const roleCode = cellData.getArrayByName('role_code');
-
+  const roleCode = cellData.getArrayByName('sim_type');
+  console.log(roleCode)
   let text = '<strong>Metadata:</strong>';
 
 
@@ -127,9 +104,8 @@ function buildMetadataText(cellId: number, cellData: any): string {
     text += `<br>Flow: ${markerSize.toPrecision(3)}`;
   }
 
-  const role = getCellValue(roleCode, cellId);
-  if (role !== null) {
-    text += `<br>Role: ${getRoleLabel(role)}`;
+  if (roleCode !== null) {
+    text += `<br>Type: ${roleCode}`;
   }
 
   return text;
@@ -225,15 +201,6 @@ function displayMetadata(source: any, cellId: number, mousePos: { x: number; y: 
   const cellData = source.getCellData();
   const metadataDiv = document.getElementById('metadata');
   if (!metadataDiv) return;
-
-  const vertexIndex = cellData.getArrayByName('Q');
-  console.log(vertexIndex)
-
-  // Only show metadata for spheres (vertex_index >= 0)
-  if (!isSphere(vertexIndex, cellId)) {
-    hideMetadata();
-    return;
-  }
 
   metadataDiv.innerHTML = buildMetadataText(cellId, cellData);
   metadataDiv.style.display = 'block';
