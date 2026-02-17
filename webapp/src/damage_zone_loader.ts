@@ -27,6 +27,9 @@ export function showFractureZone(): void {
  * Future: Will load damage zone file from cloud
  */
 export function showDamageZone(): void {
+  // Show not implemented message
+  alert('Not implemented yet.');
+
   const layerControls = document.getElementById('layerControls');
   if (layerControls) {
     layerControls.style.display = 'none';
