@@ -2,7 +2,7 @@ import vtkXMLPolyDataReader from '@kitware/vtk.js/IO/XML/XMLPolyDataReader';
 import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
 import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 import vtkColorTransferFunction from '@kitware/vtk.js/Rendering/Core/ColorTransferFunction';
-import vtkScalarBarActor from '@kitware/vtk.js/Rendering/Core/ScalarBarActor';
+import { createScalarBar, DEFAULT_SCALAR_BAR_CONFIG, type ScalarBarManager } from './scalar_bar.js';
 
 // ============================================================================
 // Types
@@ -67,7 +67,7 @@ export function setupFileLoader(dependencies: FileLoaderDependencies): FileLoade
   // Store layer data: { id -> { actor, mapper, source, visible } }
   const layers: Layers = {};
   let isInitialized = false;
-  let scalarBarActor: any = null;
+  let scalarBarManager: ScalarBarManager | null = null;
 
   function createLayer(layerId: string): Layer {
     const mapper = vtkMapper.newInstance();
@@ -84,43 +84,17 @@ export function setupFileLoader(dependencies: FileLoaderDependencies): FileLoade
     return layers[layerId];
   }
 
-  function createScalarBar(lut: any): void {
+  function updateScalarBar(lut: any, name: string): void {
     // Remove existing scalar bar if present
-    if (scalarBarActor) {
-      renderer.removeActor(scalarBarActor);
+    if (scalarBarManager) {
+      scalarBarManager.remove(renderer);
     }
 
-    // Create new scalar bar actor
-    scalarBarActor = vtkScalarBarActor.newInstance();
-    scalarBarActor.setScalarsToColors(lut);
-    scalarBarActor.setAxisLabel('H (m)');
-
-    // Position and style the scalar bar
-    scalarBarActor.setAxisTextStyle({
-      fontColor: 'black',
-      fontStyle: 'normal',
-      fontSize: 14,
-      fontFamily: 'Arial'
+    // Create new scalar bar with configuration
+    scalarBarManager = createScalarBar(renderer, lut, {
+      name,
+      ...DEFAULT_SCALAR_BAR_CONFIG
     });
-
-    scalarBarActor.setTickTextStyle({
-      fontColor: 'black',
-      fontStyle: 'normal',
-      fontSize: 12,
-      fontFamily: 'Arial'
-    });
-
-    // Set the scalar bar box position and size (normalized coordinates)
-    const barWidth = 0.08;
-    const barHeight = 0.7;
-    const barX = 0.88;  // Right side
-    const barY = 0.15;  // Bottom
-
-    scalarBarActor.setBoxPosition([barX, barY]);
-    scalarBarActor.setBoxSize([barWidth, barHeight]);
-
-    // Add to renderer
-    renderer.addActor(scalarBarActor);
   }
 
   function applyColorMapping(layer: Layer, arrayName: string = 'H'): void {
@@ -165,8 +139,9 @@ export function setupFileLoader(dependencies: FileLoaderDependencies): FileLoade
     mapper.setScalarModeToUsePointFieldData();
     mapper.setColorByArrayName(arrayName);
 
-    // Create/update scalar bar
-    createScalarBar(lookupTable);
+    // Create/update scalar bar with appropriate label
+    const label = arrayName === 'H' ? 'H (m)' : arrayName;
+    updateScalarBar(lookupTable, label);
 
     console.log(`Applied color mapping for '${arrayName}' with range [${min.toFixed(2)}, ${max.toFixed(2)}]`);
   }
