@@ -1,6 +1,8 @@
 import vtkXMLPolyDataReader from '@kitware/vtk.js/IO/XML/XMLPolyDataReader';
 import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
 import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
+import vtkColorTransferFunction from '@kitware/vtk.js/Rendering/Core/ColorTransferFunction';
+import vtkScalarBarActor from '@kitware/vtk.js/Rendering/Core/ScalarBarActor';
 
 // ============================================================================
 // Types
@@ -65,6 +67,7 @@ export function setupFileLoader(dependencies: FileLoaderDependencies): FileLoade
   // Store layer data: { id -> { actor, mapper, source, visible } }
   const layers: Layers = {};
   let isInitialized = false;
+  let scalarBarActor: any = null;
 
   function createLayer(layerId: string): Layer {
     const mapper = vtkMapper.newInstance();
@@ -79,6 +82,93 @@ export function setupFileLoader(dependencies: FileLoaderDependencies): FileLoade
     };
 
     return layers[layerId];
+  }
+
+  function createScalarBar(lut: any): void {
+    // Remove existing scalar bar if present
+    if (scalarBarActor) {
+      renderer.removeActor(scalarBarActor);
+    }
+
+    // Create new scalar bar actor
+    scalarBarActor = vtkScalarBarActor.newInstance();
+    scalarBarActor.setScalarsToColors(lut);
+    scalarBarActor.setAxisLabel('H (m)');
+
+    // Position and style the scalar bar
+    scalarBarActor.setAxisTextStyle({
+      fontColor: 'black',
+      fontStyle: 'normal',
+      fontSize: 14,
+      fontFamily: 'Arial'
+    });
+
+    scalarBarActor.setTickTextStyle({
+      fontColor: 'black',
+      fontStyle: 'normal',
+      fontSize: 12,
+      fontFamily: 'Arial'
+    });
+
+    // Set the scalar bar box position and size (normalized coordinates)
+    const barWidth = 0.08;
+    const barHeight = 0.7;
+    const barX = 0.88;  // Right side
+    const barY = 0.15;  // Bottom
+
+    scalarBarActor.setBoxPosition([barX, barY]);
+    scalarBarActor.setBoxSize([barWidth, barHeight]);
+
+    // Add to renderer
+    renderer.addActor(scalarBarActor);
+  }
+
+  function applyColorMapping(layer: Layer, arrayName: string = 'H'): void {
+    const { mapper, source } = layer;
+    if (!source) return;
+
+    // Get the data array to determine range
+    const pointData = source.getPointData();
+    const dataArray = pointData.getArrayByName(arrayName);
+
+    if (!dataArray) {
+      console.warn(`Array '${arrayName}' not found for color mapping`);
+      return;
+    }
+
+    const range = dataArray.getRange();
+    let [min, max] = range;
+
+    // Check for NaN values and handle them
+    if (isNaN(min) || isNaN(max)) {
+      console.warn(`Invalid range for '${arrayName}': [${min}, ${max}]. Skipping color mapping.`);
+      return;
+    }
+
+    // If min and max are the same, slightly adjust to avoid division by zero
+    if (min === max) {
+      max = min + 1;
+    }
+
+    // Create color transfer function (blue -> cyan -> green -> yellow -> red)
+    const lookupTable = vtkColorTransferFunction.newInstance();
+    lookupTable.addRGBPoint(min, 0.0, 0.0, 1.0);                    // Blue for minimum
+    lookupTable.addRGBPoint(min + (max - min) * 0.25, 0.0, 1.0, 1.0); // Cyan
+    lookupTable.addRGBPoint(min + (max - min) * 0.5, 0.0, 1.0, 0.0);  // Green for middle
+    lookupTable.addRGBPoint(min + (max - min) * 0.75, 1.0, 1.0, 0.0); // Yellow
+    lookupTable.addRGBPoint(max, 1.0, 0.0, 0.0);                    // Red for maximum
+
+    // Apply color mapping to mapper
+    mapper.setLookupTable(lookupTable);
+    mapper.setScalarRange(min, max);
+    mapper.setScalarVisibility(true);
+    mapper.setScalarModeToUsePointFieldData();
+    mapper.setColorByArrayName(arrayName);
+
+    // Create/update scalar bar
+    createScalarBar(lookupTable);
+
+    console.log(`Applied color mapping for '${arrayName}' with range [${min.toFixed(2)}, ${max.toFixed(2)}]`);
   }
 
   function loadLayerData(layerId: string, fileContents: ArrayBuffer): Layer {
@@ -96,6 +186,11 @@ export function setupFileLoader(dependencies: FileLoaderDependencies): FileLoade
     layer.source = source;
     layer.mapper.setInputData(source);
     layer.mapper.modified();
+
+    // Apply color mapping for glyph layers based on H values
+    if (layerId === 'sat_glyphs' || layerId === 'unsat_glyphs') {
+      applyColorMapping(layer, 'H');
+    }
 
     // Add actor to renderer if not already added
     if (!renderer.getActors().includes(layer.actor)) {

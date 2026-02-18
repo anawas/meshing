@@ -102,19 +102,19 @@ function buildMetadataText(cellId: number, cellData: any): string|null {
   let hasData = false;
 
   const hValue = getCellValue(hArray, cellId);
-  if (hValue !== null) {
-    text += `<br>H: ${hValue.toPrecision(3)}`;
+  if (hValue !== null && !isNaN(hValue)) {
+    text += `<br>H: ${hValue.toPrecision(3)} m`;
     hasData = true;
   }
 
   const qValue = getCellValue(qArray, cellId);
-  if (qValue !== null) {
+  if (qValue !== null && !isNaN(qValue)) {
     text += `<br>Q: ${qValue.toPrecision(3)}`;
     hasData = true;
   }
 
   const tValue = getCellValue(typeArray, cellId);
-  if (tValue !== null) {
+  if (tValue !== null && !isNaN(tValue)) {
     text += `<br>Type: ${tValue}`;
     hasData = true;
   }
