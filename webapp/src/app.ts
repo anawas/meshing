@@ -93,23 +93,33 @@ function positionTooltip(element: HTMLElement, mousePos: { x: number; y: number 
   element.style.top = `${top}px`;
 }
 
-function buildMetadataText(cellId: number, cellData: any): string {
-  const flow = cellData.getArrayByName('Q');
-  const roleCode = cellData.getArrayByName('sim_type');
-  console.log(roleCode)
+function buildMetadataText(cellId: number, cellData: any): string|null {
+  const hArray = cellData.getArrayByName('H');
+  const qArray = cellData.getArrayByName('Q');
+  const typeArray = cellData.getArrayByName('sim_type');
+
   let text = '<strong>Metadata:</strong>';
+  let hasData = false;
 
-
-  const markerSize = getCellValue(flow, cellId);
-  if (markerSize !== null) {
-    text += `<br>Flow: ${markerSize.toPrecision(3)}`;
+  const hValue = getCellValue(hArray, cellId);
+  if (hValue !== null) {
+    text += `<br>H: ${hValue.toPrecision(3)}`;
+    hasData = true;
   }
 
-  if (roleCode !== null) {
-    text += `<br>Type: ${roleCode}`;
+  const qValue = getCellValue(qArray, cellId);
+  if (qValue !== null) {
+    text += `<br>Q: ${qValue.toPrecision(3)}`;
+    hasData = true;
   }
 
-  return text;
+  const tValue = getCellValue(typeArray, cellId);
+  if (tValue !== null) {
+    text += `<br>Type: ${tValue}`;
+    hasData = true;
+  }
+
+  return hasData ? text : null;
 }
 
 // ============================================================================
@@ -203,8 +213,13 @@ function displayMetadata(source: any, cellId: number, mousePos: { x: number; y: 
   const metadataDiv = document.getElementById('metadata');
   if (!metadataDiv) return;
 
-  metadataDiv.innerHTML = buildMetadataText(cellId, cellData);
-  metadataDiv.style.display = 'block';
+  let message = buildMetadataText(cellId, cellData)
+  if (message !== null) {
+      metadataDiv.innerHTML = message;
+    metadataDiv.style.display = 'block';
+  } else {
+    return;
+  }
   positionTooltip(metadataDiv, mousePos);
 }
 
